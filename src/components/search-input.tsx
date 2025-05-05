@@ -1,23 +1,62 @@
+"use client";
+
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import { Advocate } from '@/types/advocates';
 import ResultsPerPage from '@/components/results-per-page';
 
-const SearchInput = () => {
+const SearchInput = ({ updateAdvocates }: { updateAdvocates: (advocates: Advocate[]) => void }) => {
+  const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+
+  const handleSearch = async () => {
+    try {
+      setIsSearchLoading(true);
+      const response = await fetch(`/api/advocates?q=${encodeURIComponent(searchQuery)}&pageSize=${resultsPerPage}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch advocates');
+      }
+      
+      const data = await response.json();
+      updateAdvocates(data.data);
+    } catch (error) {
+      console.error('Error searching advocates:', error);
+    } finally {
+      setIsSearchLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="flex justify-evenly items-center gap-5">
       <div className="relative w-full">
         <Input 
           className="p-4 rounded-full h-15 flex items-center"
           type="text"
-          placeholder="Search specialist by name, city, specialty or phone number"  
+          placeholder="Search specialist by name, city, specialty or phone number"
+          onKeyDown={handleKeyDown}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button className="absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center justify-center pr-3 bg-primary text-white shadow-md rounded-full w-10 h-10 cursor-pointer">
-          <Search className="text-white" />
+        <Button 
+          className="absolute top-1/2 right-3 transform -translate-y-1/2 flex items-center justify-center pr-3 bg-primary text-white shadow-md rounded-full w-10 h-10 cursor-pointer"
+          onClick={handleSearch}
+          disabled={isSearchLoading}
+        >
+          <Search className={`text-white ${isSearchLoading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
       <div className="relative">
-        <ResultsPerPage value="10" onValueChange={(value) => console.log(value)} />
+        <ResultsPerPage value={resultsPerPage} onValueChange={setResultsPerPage} />
       </div>
     </div>
   );

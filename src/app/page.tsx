@@ -47,23 +47,14 @@ export default function Home() {
   return (
     <main style={{ margin: "24px" }}>
       <Header />
-      <div className="max-w-xl m-auto">
+      <div className="max-w-7xl m-auto">
         <SearchInput />
       </div>
       <div className="max-w-7xl mx-auto my-10">
         <ResultsTable />
       </div>
-      {/* <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
-      </div> */}
-      <br />
-      <br />
-      <table>
+      
+ {/*      <table>
         <thead>
           <th>First Name</th>
           <th>Last Name</th>
@@ -92,7 +83,7 @@ export default function Home() {
             );
           })}
         </tbody>
-      </table>
+      </table> */}
     </main>
   );
 }

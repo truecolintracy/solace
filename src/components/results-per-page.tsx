@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/select"
 
 type ResultsPerPageProps = {
-  value: string;
-  onValueChange: (value: string) => void;
+  value: number;
+  onValueChange: (value: number) => void;
 }
 
 const ResultsPerPage = ({ value, onValueChange }: ResultsPerPageProps) => {
   return (
-    <Select value={value} onValueChange={onValueChange} >
+    <Select value={value.toString()} onValueChange={(val) => onValueChange(Number(val))} >
       <SelectTrigger className="w-auto rounded-full p-4 min-h-15 min-w-40 flex items-center">
         <SelectValue placeholder="Results per page" />
       </SelectTrigger>

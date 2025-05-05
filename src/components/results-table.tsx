@@ -24,7 +24,7 @@ const ResultsTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {advocates.map((advocate) => (
+       {/*  {advocates.map((advocate) => (
           <TableRow key={advocate.phoneNumber}>
             <TableCell>{advocate.firstName}</TableCell>
             <TableCell>{advocate.lastName}</TableCell>
@@ -34,7 +34,7 @@ const ResultsTable = () => {
             <TableCell className="text-center">{advocate.yearsOfExperience}</TableCell>
             <TableCell>{advocate.phoneNumber}</TableCell>
           </TableRow>
-        ))}
+        ))} */}
       </TableBody>
     </Table>
   );

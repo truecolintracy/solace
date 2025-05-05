@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/header";
 import SearchInput from "@/components/search-input";
+import ResultsTable from "@/components/results-table";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
@@ -49,7 +50,9 @@ export default function Home() {
       <div className="max-w-xl m-auto">
         <SearchInput />
       </div>
-      
+      <div className="max-w-7xl mx-auto my-10">
+        <ResultsTable />
+      </div>
       {/* <div>
         <p>Search</p>
         <p>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Header from "@/components/Header/Header";
+import Header from "@/components/header";
+import SearchInput from "@/components/search-input";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
@@ -45,14 +46,18 @@ export default function Home() {
   return (
     <main style={{ margin: "24px" }}>
       <Header />
-      <div>
+      <div className="max-w-xl m-auto">
+        <SearchInput />
+      </div>
+      
+      {/* <div>
         <p>Search</p>
         <p>
           Searching for: <span id="search-term"></span>
         </p>
         <input style={{ border: "1px solid black" }} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
-      </div>
+      </div> */}
       <br />
       <br />
       <table>

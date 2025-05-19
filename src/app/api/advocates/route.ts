@@ -18,8 +18,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
-    const pageSize = parseInt(searchParams.get('pageSize') || '10');
-    const page = parseInt(searchParams.get('page') || '1');
+    let pageSize = parseInt(searchParams.get('pageSize') || '10');
+    pageSize = pageSize <= 0 ? 10 : pageSize;
+    let page = parseInt(searchParams.get('page') || '1');
+    page = page <= 0 ? 1 : page;
     const offset = (page - 1) * pageSize;
 
     if (!query) {
@@ -30,6 +32,7 @@ export async function GET(request: NextRequest) {
       const data = await db
         .select()
         .from(advocates)
+        .orderBy(desc(advocates.id))
         .limit(pageSize)
         .offset(offset);
 
@@ -101,7 +104,7 @@ export async function GET(request: NextRequest) {
       })
       .from(advocates)
       .where(sql`${searchVector} @@ ${searchQuery}`)
-      .orderBy(desc(sql`rank`))
+      .orderBy(desc(sql`rank`), desc(advocates.id))
       .limit(pageSize)
       .offset(offset);
     

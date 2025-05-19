@@ -64,9 +64,13 @@ const Filters = () => {
       <div className="w-full">
         <Button onClick={() => {
           const params = new URLSearchParams(searchParams.toString());
-          params.delete('filters');
-          router.push(`?${params.toString()}`);
-        }} className="w-full z-40 cursor-pointer" size="lg">
+            params.delete('filters');
+            router.push(`?${params.toString()}`);
+          }}
+          className="w-full z-40 cursor-pointer"
+          size="lg"
+          data-testid="clear-filters"
+        >
           Clear Filters
         </Button>
       </div>

@@ -43,7 +43,7 @@ const Filter = ({ config }: FilterProps) => {
   // Get current value for this filter
   const getCurrentValue = () => {
     const filters = getCurrentFilters();
-    const currentFilter = filters.find(f => f.field === config.field);
+    const currentFilter = filters.find((f: { field: string }) => f.field === config.field);
     return currentFilter?.value?.toString() || '';
   };
 
@@ -51,7 +51,7 @@ const Filter = ({ config }: FilterProps) => {
     const filters = getCurrentFilters();
     
     // Remove existing filter for this field if it exists
-    const filteredFilters = filters.filter(f => f.field !== config.field);
+    const filteredFilters: { field: string; operator: string; value: string }[] = filters.filter((f: { field: string }) => f.field !== config.field);
     
     // Add new filter if a value is selected
     if (newValue) {
@@ -83,7 +83,7 @@ const Filter = ({ config }: FilterProps) => {
         value={getCurrentValue()} 
         onValueChange={handleValueChange}
       >
-        <SelectTrigger className="w-full md:w-auto rounded-full p-4 min-h-15 min-w-40 flex items-center">
+        <SelectTrigger className="w-full md:w-auto rounded-full p-4 min-h-15 min-w-40 flex items-center" data-testid={`select-${config.field}`} >
           <SelectValue placeholder={`Select ${config.title.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent className="text-center">

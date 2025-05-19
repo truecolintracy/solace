@@ -2,7 +2,8 @@ import { NextResponse, NextRequest } from 'next/server';
 import db from "@/db";
 import { advocates } from "@/db/schema";
 import { Advocate } from "@/types/advocates";
-import { desc, getTableColumns, sql, gte, lte, eq, like, SQL } from "drizzle-orm";
+import { Sort, SortDirection } from "@/types/sort"
+import { desc, asc, getTableColumns, sql, gte, lte, eq, like, SQL } from "drizzle-orm";
 
 const CACHE_DURATION = 300;
 
@@ -21,6 +22,15 @@ type FilterCondition = {
   value: string | number;
 };
 
+const sortType = ['firstName', 'lastName', 'city', 'degree', 'specialties', 'yearsOfExperience', 'phoneNumber'];
+
+const sortByGroup = (sort: Sort, sortDirection: SortDirection) => {
+  if (sortDirection === 'asc') {
+    return asc(advocates[sort])
+  }
+  return desc(sortType.includes(sort) ? advocates[sort] : advocates.id)
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -31,6 +41,8 @@ export async function GET(request: NextRequest) {
     let page = parseInt(searchParams.get('page') || '1');
     page = page <= 0 ? 1 : page;
     const offset = (page - 1) * pageSize;
+    const sort = searchParams.get('sort') as Sort;
+    const sortDirection = searchParams.get('sortDirection') as SortDirection;
 
     // Parse and validate filters
     let conditions: SQL[] = [];
@@ -89,7 +101,7 @@ export async function GET(request: NextRequest) {
         .select()
         .from(advocates)
         .where(conditions.length > 0 ? sql`${sql.join(conditions, sql` AND `)}` : undefined)
-        .orderBy(desc(advocates.id))
+        .orderBy(sortByGroup(sort, sortDirection))
         .limit(pageSize)
         .offset(offset);
 
@@ -172,7 +184,7 @@ export async function GET(request: NextRequest) {
       })
       .from(advocates)
       .where(allConditions)
-      .orderBy(desc(sql`rank`), desc(advocates.id))
+      .orderBy(desc(sql`rank`), sortByGroup(sort, sortDirection))
       .limit(pageSize)
       .offset(offset);
     

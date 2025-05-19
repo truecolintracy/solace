@@ -1,28 +1,52 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Advocate } from '@/types/advocates';
 import ResultsPerPage from '@/components/results-per-page';
 
-const SearchInput = ({ updateAdvocates }: { updateAdvocates: (advocates: Advocate[]) => void }) => {
-  const [resultsPerPage, setResultsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchInput = (
+  { 
+    updateAdvocates,
+    updateTotalResults,
+    updateResultsPerPage,
+    numberResultsPerPage = 1,
+  }: {
+    updateAdvocates: (advocates: Advocate[]) => void;
+    updateTotalResults: (total: number) => void;
+    updateResultsPerPage: (resultsPerPage: number) => void;
+    numberResultsPerPage: number;
+  }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [resultsPerPage, setResultsPerPage] = useState(numberResultsPerPage);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
   const handleSearch = async () => {
     try {
       setIsSearchLoading(true);
-      const response = await fetch(`/api/advocates?q=${encodeURIComponent(searchQuery)}&pageSize=${resultsPerPage}`);
+      
+      const params = new URLSearchParams();
+      params.set('q', searchQuery);
+      params.set('pageSize', resultsPerPage.toString());
+      params.set('page', '1');
+      
+      const response = await fetch(`/api/advocates?${params.toString()}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch advocates');
       }
       
       const data = await response.json();
+      updateTotalResults(data.total);
       updateAdvocates(data.data);
+      updateResultsPerPage(data.pageSize);
+      
+      router.push(`?${params.toString()}`);
     } catch (error) {
       console.error('Error searching advocates:', error);
     } finally {

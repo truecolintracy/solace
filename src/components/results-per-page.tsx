@@ -20,7 +20,7 @@ const ResultsPerPage = ({ value, onValueChange }: ResultsPerPageProps) => {
 
   return (
     <Select value={value.toString()} onValueChange={handleValueChange} >
-      <SelectTrigger className="w-auto rounded-full p-4 min-h-15 min-w-40 flex items-center">
+      <SelectTrigger className="w-full md:w-auto rounded-full p-4 min-h-15 min-w-40 flex items-center ">
         <SelectValue placeholder="Results per page" />
       </SelectTrigger>
       <SelectContent className="text-center">

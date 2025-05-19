@@ -37,9 +37,9 @@ const SearchInput = () => {
   };
 
   return (
-    <div className="flex justify-evenly items-center gap-5">
+    <div className="flex justify-evenly items-center gap-5 flex-wrap md:flex-nowrap">
       <div className="relative w-full">
-        <Input 
+        <Input
           className="p-4 rounded-full h-15 flex items-center"
           type="text"
           placeholder="Search specialist by name, city, specialty or phone number"
@@ -55,7 +55,7 @@ const SearchInput = () => {
           <Search className={`text-white ${isSearchLoading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
-      <div className="relative">
+      <div className="relative w-full md:w-auto">
         <ResultsPerPage 
           value={Number(searchParams.get('pageSize') || '10')} 
           onValueChange={(val) => {

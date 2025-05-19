@@ -32,7 +32,7 @@ const PaginationResults = ({ resultsLength, perPageResults }: { resultsLength: n
       <PaginationContent>
         {currentPage > 1 ? (
           <PaginationItem className="cursor-pointer">
-            <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} />
+            <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} data-testid="prev-page" />
           </PaginationItem>
         ) : null}
 
@@ -46,7 +46,7 @@ const PaginationResults = ({ resultsLength, perPageResults }: { resultsLength: n
         ))}
         {totalPages > 1 && currentPage !== totalPages ? (
           <PaginationItem className="cursor-pointer">
-            <PaginationNext onClick={() => handlePageChange(currentPage + 1)} />
+            <PaginationNext onClick={() => handlePageChange(currentPage + 1)} data-testid="next-page" />
           </PaginationItem>
         ) : null}
       </PaginationContent>

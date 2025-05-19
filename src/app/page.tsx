@@ -30,9 +30,8 @@ const Home = () => {
 
   const fetchAdvocates = useCallback(async () => {
     try {
-      const params = new URLSearchParams(searchParams.toString());
-      const pageSize = params.get('pageSize') || resultsPerPage.toString();
-      params.set('pageSize', pageSize);
+      const params = new URLSearchParams();
+      params.set('pageSize', resultsPerPage.toString());
       params.set('page', currentPage);
       
       if (currentQuery) {
@@ -53,7 +52,7 @@ const Home = () => {
       console.error("Error fetching advocates:", error);
       setAdvocates([]);
     }
-  }, [currentPage, currentQuery, searchParams, resultsPerPage]);
+  }, [currentPage, currentQuery, resultsPerPage]);
 
   useEffect(() => {
     fetchAdvocates();
@@ -73,9 +72,12 @@ const Home = () => {
       <div className="max-w-7xl mx-auto my-10">
         <ResultsTable advocates={advocates} />
       </div>
-      <div>
-        <PaginationResults resultsLength={totalAdvocates} perPageResults={resultsPerPage} />
-      </div>
+      {totalAdvocates > 0 ? (
+        <div>
+          <PaginationResults resultsLength={totalAdvocates} perPageResults={resultsPerPage} />
+        </div>
+      ) : null}
+      
     </main>
   );
 }

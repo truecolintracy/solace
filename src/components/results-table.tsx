@@ -12,9 +12,9 @@ import { Advocate } from "@/types/advocates";
 const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
   if (!advocates || advocates.length === 0) {
     return (
-      <Table>
-        <TableCaption>No results found</TableCaption>
-      </Table>
+      <div className="flex items-center justify-center h-full">
+        <p>No results found</p>
+      </div>
     );
   }
 
@@ -33,16 +33,16 @@ const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
       </TableHeader>
       <TableBody>
         {advocates?.map((advocate) => (
-          <TableRow key={advocate.phoneNumber}>
-            <TableCell>{advocate.firstName}</TableCell>
-            <TableCell>{advocate.lastName}</TableCell>
-            <TableCell>{advocate.city}</TableCell>
-            <TableCell>{advocate.degree}</TableCell>
-            <TableCell className="text-wrap max-w-80 whitespace-normal">
+          <TableRow key={advocate.phoneNumber} data-testid="advocate-row">
+            <TableCell data-testid="first-name">{advocate.firstName}</TableCell>
+            <TableCell data-testid="last-name">{advocate.lastName}</TableCell>
+            <TableCell data-testid="city">{advocate.city}</TableCell>
+            <TableCell data-testid="degree">{advocate.degree}</TableCell>
+            <TableCell className="text-wrap max-w-80 whitespace-normal" data-testid="specialties">
               {Array.isArray(advocate.specialties) ? advocate.specialties.join(", ") : "N/A"}
             </TableCell>
-            <TableCell className="text-center">{advocate.yearsOfExperience}</TableCell>
-            <TableCell>{advocate.phoneNumber}</TableCell>
+            <TableCell className="text-center" data-testid="years-of-experience">{advocate.yearsOfExperience}</TableCell>
+            <TableCell data-testid="phone-number">{advocate.phoneNumber}</TableCell>
           </TableRow>
         ))}
       </TableBody>

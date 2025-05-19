@@ -9,29 +9,15 @@ import ResultsTable from "@/components/results-table";
 import PaginationResults from "@/components/pagination";
 
 const Home = () => {
-  const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [resultsPerPage, setResultsPerPage] = useState(1);
-  const [totalAdvocates, setTotalAdvocates] = useState(1);
   const searchParams = useSearchParams();
   const currentPage = searchParams.get('page') || '1';
   const currentQuery = searchParams.get('q') || '';
-
-  const updateAdvocates = async (advocateResults: Advocate[]) => {
-    setAdvocates(advocateResults);
-  };
-
-  const updateTotalResults = async (total: number) => {
-    setTotalAdvocates(total);
-  };
-
-  const updateResultsPerPage = async (resultsPerPage: number) => {
-    setResultsPerPage(resultsPerPage);
-  };
+  const currentPageSize = searchParams.get('pageSize') || '10';
 
   const fetchAdvocates = useCallback(async () => {
     try {
       const params = new URLSearchParams();
-      params.set('pageSize', resultsPerPage.toString());
+      params.set('pageSize', currentPageSize);
       params.set('page', currentPage);
       
       if (currentQuery) {
@@ -44,40 +30,39 @@ const Home = () => {
         throw new Error("Failed to fetch advocates");
       }
       const data = await response.json();
-
-      setAdvocates(data.data);
-      setTotalAdvocates(data.total);
-      setResultsPerPage(data.pageSize);
+      return data;
     } catch (error) {
       console.error("Error fetching advocates:", error);
-      setAdvocates([]);
+      return { data: [], total: 0, pageSize: Number(currentPageSize) };
     }
-  }, [currentPage, currentQuery, resultsPerPage]);
+  }, [currentPage, currentQuery, currentPageSize]);
+
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [totalAdvocates, setTotalAdvocates] = useState(0);
 
   useEffect(() => {
-    fetchAdvocates();
+    const updateResults = async () => {
+      const data = await fetchAdvocates();
+      setAdvocates(data.data);
+      setTotalAdvocates(data.total);
+    };
+    updateResults();
   }, [fetchAdvocates]);
 
   return (
     <main className="m-5">
       <Header />
       <div className="max-w-7xl m-auto">
-        <SearchInput
-          updateAdvocates={updateAdvocates}
-          updateTotalResults={updateTotalResults}
-          updateResultsPerPage={updateResultsPerPage}
-          numberResultsPerPage={resultsPerPage}
-        />
+        <SearchInput />
       </div>
       <div className="max-w-7xl mx-auto my-10">
         <ResultsTable advocates={advocates} />
       </div>
       {totalAdvocates > 0 ? (
         <div>
-          <PaginationResults resultsLength={totalAdvocates} perPageResults={resultsPerPage} />
+          <PaginationResults resultsLength={totalAdvocates} perPageResults={Number(currentPageSize)} />
         </div>
       ) : null}
-      
     </main>
   );
 }

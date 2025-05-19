@@ -8,21 +8,9 @@ import { Search } from 'lucide-react';
 import { Advocate } from '@/types/advocates';
 import ResultsPerPage from '@/components/results-per-page';
 
-const SearchInput = (
-  { 
-    updateAdvocates,
-    updateTotalResults,
-    updateResultsPerPage,
-    numberResultsPerPage = 1,
-  }: {
-    updateAdvocates: (advocates: Advocate[]) => void;
-    updateTotalResults: (total: number) => void;
-    updateResultsPerPage: (resultsPerPage: number) => void;
-    numberResultsPerPage: number;
-  }) => {
+const SearchInput = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [resultsPerPage, setResultsPerPage] = useState(numberResultsPerPage);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
@@ -30,21 +18,9 @@ const SearchInput = (
     try {
       setIsSearchLoading(true);
       
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(searchParams.toString());
       params.set('q', searchQuery);
-      params.set('pageSize', resultsPerPage.toString());
       params.set('page', '1');
-      
-      const response = await fetch(`/api/advocates?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch advocates');
-      }
-      
-      const data = await response.json();
-      updateTotalResults(data.total);
-      updateAdvocates(data.data);
-      updateResultsPerPage(data.pageSize);
       
       router.push(`?${params.toString()}`);
     } catch (error) {
@@ -80,7 +56,15 @@ const SearchInput = (
         </Button>
       </div>
       <div className="relative">
-        <ResultsPerPage value={resultsPerPage} onValueChange={setResultsPerPage} />
+        <ResultsPerPage 
+          value={Number(searchParams.get('pageSize') || '10')} 
+          onValueChange={(val) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('pageSize', val.toString());
+            params.set('page', '1');
+            router.push(`?${params.toString()}`);
+          }}
+        />
       </div>
     </div>
   );

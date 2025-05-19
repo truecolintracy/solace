@@ -14,7 +14,7 @@ type ResultsPerPageProps = {
 }
 
 const ResultsPerPage = ({ value, onValueChange }: ResultsPerPageProps) => {
-  const handleValueChange = (val: string) => { 
+  const handleValueChange = (val: string) => {
     onValueChange(Number(val));
   }
 

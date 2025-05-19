@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { Advocate } from "@/types/advocates";
 
 test.describe('Advocates API', () => {
   const baseUrl = '/api/advocates';
@@ -107,5 +108,96 @@ test.describe('Advocates API', () => {
 
     expect(response.ok()).toBeTruthy();
     expect(data.data.length).toBeGreaterThan(0);
+  });
+
+  test('should filter by years of experience (gte)', async ({ request }) => {
+    const filters = JSON.stringify([{
+      field: 'yearsOfExperience',
+      operator: 'gte',
+      value: 3
+    }]);
+    const response = await request.get(`${baseUrl}?filters=${encodeURIComponent(filters)}`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data.every((advocate: Advocate) => advocate.yearsOfExperience >= 3)).toBeTruthy();
+  });
+
+  test('should filter by city (eq)', async ({ request }) => {
+    const filters = JSON.stringify([{
+      field: 'city',
+      operator: 'eq',
+      value: 'New York'
+    }]);
+    const response = await request.get(`${baseUrl}?filters=${encodeURIComponent(filters)}`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data.every((advocate: Advocate) => advocate.city === 'New York')).toBeTruthy();
+  });
+
+  test('should filter by degree (eq)', async ({ request }) => {
+    const filters = JSON.stringify([{
+      field: 'degree',
+      operator: 'eq',
+      value: 'MD'
+    }]);
+    const response = await request.get(`${baseUrl}?filters=${encodeURIComponent(filters)}`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data.every((advocate: Advocate) => advocate.degree === 'MD')).toBeTruthy();
+  });
+
+  test('should handle multiple filters', async ({ request }) => {
+    const filters = JSON.stringify([
+      {
+        field: 'yearsOfExperience',
+        operator: 'gte',
+        value: 2
+      },
+      {
+        field: 'city',
+        operator: 'eq',
+        value: 'New York'
+      }
+    ]);
+    const response = await request.get(`${baseUrl}?filters=${encodeURIComponent(filters)}`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data.every((advocate: Advocate) => 
+      advocate.yearsOfExperience >= 2 && advocate.city === 'New York'
+    )).toBeTruthy();
+  });
+
+  test('should handle invalid filter format', async ({ request }) => {
+    const response = await request.get(`${baseUrl}?filters=invalid-json`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeFalsy();
+    expect(response.status()).toBe(400);
+    expect(data).toHaveProperty('error', 'Invalid filters format');
+  });
+
+  test('should combine filters with search query', async ({ request }) => {
+    const filters = JSON.stringify([{
+      field: 'yearsOfExperience',
+      operator: 'gte',
+      value: 3
+    }]);
+    const response = await request.get(`${baseUrl}?q=John&filters=${encodeURIComponent(filters)}`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data.every((advocate: Advocate) => 
+      advocate.yearsOfExperience >= 3 && 
+      (advocate.firstName.includes('John') || advocate.lastName.includes('John'))
+    )).toBeTruthy();
   });
 }); 

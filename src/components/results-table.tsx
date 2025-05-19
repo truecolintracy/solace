@@ -20,7 +20,7 @@ const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
   return (
     <div>
       <div className="md:block hidden">
-        <Table>
+        <Table data-testid="advocate-table">
           <TableHeader>
             <TableRow>
               <TableHead>First Name</TableHead>
@@ -49,9 +49,9 @@ const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-4" data-testid="advocate-mobile-table">
         {advocates?.map((advocate) => (
-          <div key={advocate.phoneNumber} className="bg-white rounded-lg shadow-xs border-1 p-4 space-y-2" data-testid="advocate-row">
+          <div key={advocate.phoneNumber} className="bg-white rounded-lg shadow-xs border-1 p-4 space-y-2">
             <div className="grid grid-cols-2 gap-2">
               <div className="font-semibold">First Name:</div>
               <div data-testid="first-name">{advocate.firstName}</div>

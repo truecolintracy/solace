@@ -15,6 +15,8 @@ const Home = () => {
   const currentQuery = searchParams.get('q') || '';
   const currentPageSize = searchParams.get('pageSize') || '10';
   const currentFilters = searchParams.get('filters') || '[]';
+  const currentSort = searchParams.get('sort') || '';
+  const currentSortDirection = searchParams.get('sortDirection') || 'asc';
 
   const fetchAdvocates = useCallback(async () => {
     try {
@@ -22,7 +24,9 @@ const Home = () => {
       params.set('pageSize', currentPageSize);
       params.set('page', currentPage);
       params.set('filters', currentFilters);
-      
+      params.set('sort', currentSort);
+      params.set('sortDirection', currentSortDirection);
+
       if (currentQuery) {
         params.set('q', currentQuery);
       }
@@ -38,7 +42,7 @@ const Home = () => {
       console.error("Error fetching advocates:", error);
       return { data: [], total: 0, pageSize: Number(currentPageSize) };
     }
-  }, [currentPage, currentQuery, currentPageSize, currentFilters]);
+  }, [currentPage, currentQuery, currentPageSize, currentFilters, currentSort, currentSortDirection]);
 
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [totalAdvocates, setTotalAdvocates] = useState(0);

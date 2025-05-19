@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -7,8 +11,40 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Advocate } from "@/types/advocates";
+import { Sort, SortDirection } from "@/types/sort"
+import { ArrowUpWideNarrow } from "lucide-react";
+
+type SortState = {
+  sort: Sort | null;
+  direction: SortDirection;
+}
 
 const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [sortState, setSortState] = useState<SortState>({
+    sort: null,
+    direction: 'asc'
+  });
+
+  const handleToggleSort = (sortByName: Sort) => {
+    setSortState(prevState => {
+      const newDirection = prevState.sort === sortByName 
+        ? (prevState.direction === 'asc' ? 'desc' : 'asc')
+        : 'asc';
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('sort', sortByName);
+      params.set('sortDirection', newDirection);
+      router.push(`?${params.toString()}`);
+
+      return {
+        sort: sortByName,
+        direction: newDirection
+      };
+    });
+  }
+
   if (!advocates || advocates.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -23,13 +59,48 @@ const ResultsTable = ({ advocates }: { advocates: Advocate[] }) => {
         <Table data-testid="advocate-table">
           <TableHeader>
             <TableRow>
-              <TableHead>First Name</TableHead>
-              <TableHead>Last Name</TableHead>
-              <TableHead>City</TableHead>
-              <TableHead>Degree</TableHead>
-              <TableHead>Specialties</TableHead>
-              <TableHead>Years of Experience</TableHead>
-              <TableHead>Phone Number</TableHead>
+              <TableHead data-testid="sort-by-firstName" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("firstName")}>
+                <span className="inline-block">First Name</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "firstName" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-lastName" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("lastName")}>
+                <span className="inline-block">Last Name</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "lastName" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-city" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("city")}>
+                <span className="inline-block">City</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "city" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-degree" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("degree")}>
+                <span className="inline-block">Degree</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "degree" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-specialties" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("specialties")}>
+                <span className="inline-block">Specialties</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "specialties" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-yearsOfExperience" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("yearsOfExperience")}>
+                <span className="inline-block">Years of Experience</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "yearsOfExperience" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`} />
+                </span>
+              </TableHead>
+              <TableHead data-testid="sort-by-phoneNumber" className="cursor-pointer whitespace-nowrap" onClick={() => handleToggleSort("phoneNumber")}>
+                <span>Phone Number</span>
+                <span className={`inline-block`}>
+                  <ArrowUpWideNarrow className={`${sortState.sort === "phoneNumber" ? (sortState.direction === 'asc' ? 'rotate-180' : '') : ''} transition-all size-5 ml-1 relative top-1`}/>
+                </span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

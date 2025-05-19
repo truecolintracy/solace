@@ -27,6 +27,17 @@ test.describe('Advocates API', () => {
     expect(data.data.length).toBeLessThanOrEqual(5);
   });
 
+  test('should handle custom sort', async ({ request }) => {
+    const response = await request.get(`${baseUrl}?sort=firstName&sortDirection=asc`);
+    const data = await response.json();
+
+    expect(response.ok()).toBeTruthy();
+    expect(data.pageSize).toBe(10);
+    expect(data.currentPage).toBe(1);
+    expect(data.data.length).toBeGreaterThan(0);
+    expect(data.data[0]).toHaveProperty('firstName');
+  });
+
   test('should search by name', async ({ request }) => {
     const response = await request.get(`${baseUrl}?q=John`);
     const data = await response.json();

@@ -7,4 +7,5 @@ export type Advocate = {
   specialties: string[] | unknown;
   yearsOfExperience: number;
   phoneNumber: string | number;
-}
+  [key: string]: any;
+};

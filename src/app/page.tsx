@@ -7,18 +7,21 @@ import Header from "@/components/header";
 import SearchInput from "@/components/search-input";
 import ResultsTable from "@/components/results-table";
 import PaginationResults from "@/components/pagination";
+import Filters from "@/components/filters";
 
 const Home = () => {
   const searchParams = useSearchParams();
   const currentPage = searchParams.get('page') || '1';
   const currentQuery = searchParams.get('q') || '';
   const currentPageSize = searchParams.get('pageSize') || '10';
+  const currentFilters = searchParams.get('filters') || '[]';
 
   const fetchAdvocates = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       params.set('pageSize', currentPageSize);
       params.set('page', currentPage);
+      params.set('filters', currentFilters);
       
       if (currentQuery) {
         params.set('q', currentQuery);
@@ -35,7 +38,7 @@ const Home = () => {
       console.error("Error fetching advocates:", error);
       return { data: [], total: 0, pageSize: Number(currentPageSize) };
     }
-  }, [currentPage, currentQuery, currentPageSize]);
+  }, [currentPage, currentQuery, currentPageSize, currentFilters]);
 
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [totalAdvocates, setTotalAdvocates] = useState(0);
@@ -55,6 +58,7 @@ const Home = () => {
       <div className="max-w-7xl m-auto">
         <SearchInput />
       </div>
+      <Filters />
       <div className="max-w-7xl mx-auto my-10">
         <ResultsTable advocates={advocates} />
       </div>
